@@ -37,6 +37,13 @@ async function run() {
          res.send(result);
       })
 
+      app.get("/users/designate/:uid", async (req, res) => {
+         const uid = req.params.uid;
+         const query = { _id: new ObjectId(uid) };
+         const result = await usersGathering.findOne(query);
+         res.send(result);
+      })
+
       app.post("/users", async (req, res) => {
          const user = req.body;
          const query = { email: user.email }
@@ -45,6 +52,19 @@ async function run() {
             return res.send({ message: "User already exists.", insertedId: null })
          }
          const result = await usersGathering.insertOne(user);
+         res.send(result);
+      })
+
+      app.patch("/users/designate/:uid", async (req, res) => {
+         const job = req.body;
+         const uid = req.params.uid;
+         const filter = { _id: new ObjectId(uid) };
+         const updateDoc = {
+            $set: {
+               role: job.role,
+            }
+         }
+         const result = await usersGathering.updateOne(filter, updateDoc);
          res.send(result);
       })
 
